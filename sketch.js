@@ -73,7 +73,7 @@ function draw() {
 
       jumpSound.play();
 
-      kangaroo.velocityY = -2
+      kangaroo.velocityY = -16
 
     }
     kangaroo.velocityY = kangaroo.velocityY + 0.2;
