@@ -13,7 +13,7 @@ var obstaclesGroup, obstacle1;
 
 var score=0;
 
-var gameOver, restart;
+var gameOverImg, restartImg, gameOver, restart;
 
 function preload(){
   kangaroo_running =   loadAnimation("assets/kangaroo1.png","assets/kangaroo2.png","assets/kangaroo3.png");
@@ -43,7 +43,20 @@ function setup() {
   kangaroo.scale = 0.15;
   kangaroo.addAnimation("running",kangaroo_running); //by me
   kangaroo.addAnimation("collided",kangaroo_collided); //by me
-  kangaroo.setCollider("circle",0,0,300);//by me 
+  kangaroo.setCollider("circle",0,0,300);//by me
+
+  gameOver = createSprite(430,100);
+  restart = createSprite(430,150);
+  restart.scale= 0.1
+  gameOver.scale = 0.5
+  
+gameOver.addImage("game over",gameOverImg);
+restart.addImage("restart game",restartImg);
+gameOver.visible = false;
+restart.visible = false;
+
+
+
   invisibleground = createSprite(400,350,800,10); //by me
   invisibleground.visible = false;
   
@@ -73,7 +86,7 @@ function draw() {
 
       jumpSound.play();
 
-      kangaroo.velocityY = -16
+      kangaroo.velocityY = -7
 
     }
     kangaroo.velocityY = kangaroo.velocityY + 0.2;
@@ -94,8 +107,13 @@ function draw() {
       score = score+1;
       shrubG.destroyEach();
     }
+
+    
+
   }else if(gameState===END){
      
+    gameOver.visible = true;
+    restart.visible = true;
     kangaroo.velocityX = 0;
     kangaroo.velocityY = 0;
     jungle.velocityX = 0;
@@ -105,14 +123,46 @@ function draw() {
     obstacleG.setLifetimeEach(-1);
     shrubG.setLifetimeEach(-1);
 
+    
+    if(mousePressedOver(restart)){
+      reset();
+    }
    
     
     
+  }else if(gameState === WIN){
+
+    jungle.velocityX = 0;
+    kangaroo.velocityY = 0;
+    obstacleG.setVelocityXEach(0);
+    shrubG.setVelocityXEach(0);
+
+    kangaroo.changeAnimation("collided",kangaroo_collided);
+
+    obstacleG.setLifetimeEach(-1);
+    shrubG.setLifetimeEach(-1);
+
   }
 
 
 
   drawSprites();
+
+  textSize(20);
+  stroke(3);
+ fill("black")
+ text("Score:"+score, camera.position.x,50);
+
+ if(score >=5){
+
+  kangaroo.visible = false;
+  textSize(30);
+  stroke(3);
+  fill("black");
+  text("Congratulations, you win the game!",200,200);
+  gameState = WIN;
+ }
+
 
 }
 
@@ -154,5 +204,18 @@ function spawnObstacles(){
     
     obstacleG.add(obstacle);
   }
+
+}
+
+function reset(){
+gameState = PLAY;
+gameOver.visible = false;
+restart.visible = false;
+kangaroo.visible = true;
+kangaroo.changeAnimation("running",kangaroo_running);
+obstacleG.destroyEach();
+shrubG.destroyEach();
+score=0;
+
 
 }
